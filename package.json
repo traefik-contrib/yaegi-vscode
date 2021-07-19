@@ -1,0 +1,137 @@
+{
+	"name": "yaegi",
+	"publisher": "ethan-reesor",
+	"displayName": "Yaegi Debugger",
+	"description": "Yaegi Debugger",
+	"version": "0.0.0+prerelease",
+	"author": "Ethan Reesor <ethan.reesor@gmail.com>",
+	"license": "Apache-2.0",
+	"icon": "images/yaegi.png",
+	"homepage": "https://gitlab.com/ethan.reesor/vscode-notebooks/vscode-yaegi",
+	"repository": {
+		"type": "git",
+		"url": "https://gitlab.com/ethan.reesor/vscode-notebooks/vscode-yaegi.git"
+	},
+	"bugs": {
+	  	"url": "https://gitlab.com/ethan.reesor/vscode-notebooks/vscode-yaegi/issues"
+	},
+	"engines": {
+		"vscode": "^1.58.0"
+	},
+	"extensionDependencies": [
+	  "golang.go-nightly"
+	],
+	"categories": [
+		"Debuggers"
+	],
+	"activationEvents": [
+		"workspaceContains:**/*.go",
+		"onLanguage:go",
+		"onDebugInitialConfigurations",
+		"onDebugResolve:go"
+	],
+	"main": "./dist/extension.js",
+	"contributes": {
+		"breakpoints": [
+			{
+				"language": "go"
+			}
+		],
+		"debuggers": [
+			{
+				"type": "yaegi",
+				"label": "Yaegi",
+				"languages": [
+					"go"
+				],
+
+				"configurationSnippets": [
+					{
+						"label": "Yaegi: Launch File",
+						"description": "Debug/test the file in the program attribute",
+						"body": {
+							"name": "${2:Launch File}",
+							"type": "yaegi",
+							"request": "launch",
+							"mode": "auto",
+							"program": "^\"${1:\\${file\\}}\""
+						}
+					}
+				],
+				"configurationAttributes": {
+					"attach": {
+						"required": [
+							"socket"
+						],
+						"properties": {
+							"socket": {
+								"type": "string",
+								"description": "Path to the debug socket"
+							}
+						}
+					},
+					"launch": {
+						"required": [
+							"program"
+						],
+						"properties": {
+							"program": {
+								"type": "string",
+								"description": "Absolute path to a Go file.",
+								"default": "${workspaceFolder}/${command:AskForProgramName}"
+							},
+							"cwd": {
+								"type": "string",
+								"description": "Directory to execute the program in",
+								"default": "${workspaceFolder}"
+							},
+							"args": {
+								"type": "array",
+								"description": "Command line arguments passed to the program.",
+								"items": {
+									"type": "string"
+								},
+								"default": []
+							},
+							"env": {
+								"type": "object",
+								"description": "Additional environment variables to pass to the debugging (and debugged) process.",
+								"default": {}
+							},
+							"stopAtEntry": {
+								"type": "boolean",
+								"description": "Stop the program at its entry point",
+								"default": false
+							},
+							"showProtocolLog": {
+								"type": "boolean",
+								"description": "Show a log of DAP requests, events, and responses",
+								"default": false
+							}
+						}
+					}
+				}
+			}
+		]
+	},
+	"scripts": {
+		"bundle": "esbuild ./src/extension.ts --bundle --outfile=dist/extension.js --external:vscode --format=cjs --platform=node",
+		"compile": "yarn run bundle --sourcemap",
+		"watch": "yarn run bundle --sourcemap --watch",
+		"lint": "eslint src --ext ts",
+		"vscode:prepublish": "yarn run bundle --minify"
+	},
+	"devDependencies": {
+		"@types/moment": "^2.13.0",
+		"@types/node": "14.x",
+		"@types/semver": "^7.3.7",
+		"@types/vscode": "^1.58.0",
+		"@typescript-eslint/eslint-plugin": "^4.26.0",
+		"@typescript-eslint/parser": "^4.26.0",
+		"esbuild": "^0.12.15",
+		"eslint": "^7.27.0",
+		"typescript": "^4.3.2",
+		"vsce": "^1.95.1"
+	},
+	"dependencies": {}
+}
